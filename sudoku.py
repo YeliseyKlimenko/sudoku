@@ -141,6 +141,101 @@ def Mto_class(M): #function that takes the sudoku table (9x9 list) as an input a
     return A
 
 
+# In[1]:
+
+
+def Lto_class(A):  #function that attaches the appropriate links to each 'square' type object in the matrix
+    for i in range(len(A)):
+        for square in A[i]:
+            L = []
+            for k in square.K:
+                for neighbor in square.N:
+                    for kk in neighbor.K:
+                        if (kk!=k):
+                            L.append(Link(square,neighbor,k,kk))
+            square.L.extend(L)
+
+
+# In[2]:
+
+
+def ACalg(A):  #arc_consistency enforcement algorithm
+    l = range(len(A))
+    flag = 0
+    '''label check'''
+    for i in l:
+        Alt = []
+        for square in A[i]:
+            for k in square.K:
+                if np.all([square.is_paired(k,N) for N in square.N])!=True:
+                    square.K.remove(k)
+                    flag = 1
+    '''link check'''
+    for i in l:
+        for square in A[i]:
+            for link in square.L:
+                if link.S[0].K.count(link.K[0])==0 or link.S[1].K.count(link.K[1])==0:
+                    square.L.remove(link)
+                    flag = 1
+
+    if flag==1:
+        return ACalg(A)
+    else:
+        return A
+
+
+# In[3]:
+
+
+def class_to_M(A):  #function that converts a matrix of 'square' type objects into a 9x9 list
+    M = []
+    for i in range(len(A)):
+        Mt = []
+        for j in range(len(A)):
+            if len(A[i][j].K)==1:
+                Mt.append(A[i][j].K[0])
+            else:
+                Mt.append(0)
+        M.append(Mt)
+    return M
+        
+def finish(A):  #brute force algorithm
+    B = A.copy()
+    M = class_to_M(B)
+    for i in range(len(M)):
+        for j in range(len(M)):
+            if M[i][j]==0:
+                for k in A[i][j].K:
+                    B[i][j].K = [k]
+                    B = ACalg(B)
+                    return finish(B)
+    return A
+
+
+# ### Arc-consistency algorithm
+
+# In[4]:
+
+
+def solve(M):  #function that takes a sudoku table (9x9 list) as an input and returns a solved table (9x9 list) or reports on the puzzle's insolubility
+    
+    """
+    >>> solve([[1,9,5,7,4,3,8,6,1],[4,3,1,8,6,5,9,0,0],[8,7,6,1,9,2,5,4,3],[3,8,7,4,5,9,2,1,6],[6,1,2,3,8,7,4,9,5],[5,4,9,2,1,6,7,3,8],[7,6,3,5,2,4,1,8,9],[9,2,8,6,7,1,3,4,5],[1,5,4,9,3,8,6,0,0]])
+    unsolvable
+    >>> solve([[2,4,8,3,6,5,7,9,1],[9,3,7,8,1,4,6,2,5],[5,1,6,7,2,9,3,8,4],[7,8,1,4,3,2,5,6,9],[4,6,9,5,8,1,2,7,3],[3,5,2,9,7,6,4,1,8],[8,9,5,2,4,7,1,3,6],[6,0,4,1,9,3,8,5,0],[1,0,3,6,5,8,9,4,0]])
+    [[2, 4, 8, 3, 6, 5, 7, 9, 1], [9, 3, 7, 8, 1, 4, 6, 2, 5], [5, 1, 6, 7, 2, 9, 3, 8, 4], [7, 8, 1, 4, 3, 2, 5, 6, 9], [4, 6, 9, 5, 8, 1, 2, 7, 3], [3, 5, 2, 9, 7, 6, 4, 1, 8], [8, 9, 5, 2, 4, 7, 1, 3, 6], [6, 2, 4, 1, 9, 3, 8, 5, 7], [1, 7, 3, 6, 5, 8, 9, 4, 2]]
+    """
+    A = Mto_class(M)
+    Lto_class(A)
+    R = ACalg(A)
+    R = finish(R)
+    M = class_to_M(R)
+    if np.all([x!=0 for x in np.array(M).ravel()]):
+        return M
+    else:
+        print('unsolvable')
+
+
 # In[ ]:
 
 
