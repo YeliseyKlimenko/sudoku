@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[6]:
+# In[2]:
 
 
 import numpy as np
@@ -12,11 +12,11 @@ import doctest
 
 # ### Import initial tables
 
-# In[22]:
+# In[4]:
 
 
-file_name1='sudoku_01.json'
-file_name2='sudoku_02.json'
+file_name1='D:/ASD/rocks/sudoku_01.json'
+file_name2='D:/ASD/rocks/sudoku_02.json'
 
 with open(file_name1, 'r') as jsonfile:
     sudoku1 = json.load(jsonfile)
@@ -27,7 +27,7 @@ with open(file_name2, 'r') as jsonfile:
 
 # ### Plot initial tables
 
-# In[9]:
+# In[5]:
 
 
 def sudoku_plot(M):
@@ -42,21 +42,9 @@ def sudoku_plot(M):
                 text = ax.text(i, j, M[i][j], ha="center", va="center", color="red")
 
 
-# In[10]:
-
-
-sudoku_plot(sudoku1)
-
-
-# In[11]:
-
-
-sudoku_plot(sudoku2)
-
-
 # ### Dependencies
 
-# In[12]:
+# In[8]:
 
 
 class Square:  #class that represents each square in a soduku table
@@ -81,7 +69,7 @@ class Link:  #class that represents each link(arc) between neighboring squares a
         self.K = [K1, K2] #label pair
 
 
-# In[13]:
+# In[9]:
 
 
 def Mto_class(M): #function that takes the sudoku table (9x9 list) as an input and converts it into a 9x9 matrix of 'square' type objects
@@ -141,7 +129,7 @@ def Mto_class(M): #function that takes the sudoku table (9x9 list) as an input a
     return A
 
 
-# In[14]:
+# In[10]:
 
 
 def Lto_class(A):  #function that attaches the appropriate links to each 'square' type object in the matrix
@@ -156,7 +144,7 @@ def Lto_class(A):  #function that attaches the appropriate links to each 'square
             square.L.extend(L)
 
 
-# In[15]:
+# In[11]:
 
 
 def ACalg(A):  #arc_consistency enforcement algorithm
@@ -184,7 +172,7 @@ def ACalg(A):  #arc_consistency enforcement algorithm
         return A
 
 
-# In[16]:
+# In[29]:
 
 
 def class_to_M(A):  #function that converts a matrix of 'square' type objects into a 9x9 list
@@ -208,54 +196,37 @@ def finish(A):  #brute force algorithm
                 for k in A[i][j].K:
                     B[i][j].K = [k]
                     B = ACalg(B)
-                    return finish(B)
+                    if np.any([square.K==[] for square in np.array(B).ravel()])!=True:
+                        return finish(B)
     return A
 
 
 # ### Arc-consistency algorithm
 
-# In[20]:
+# In[35]:
 
 
 def solve(M):  #function that takes a sudoku table (9x9 list) as an input and returns a solved table (9x9 list) or reports on the puzzle's insolubility
     
     """
-    >>> solve([[1,9,5,7,4,3,8,6,1],[4,3,1,8,6,5,9,0,0],[8,7,6,1,9,2,5,4,3],[3,8,7,4,5,9,2,1,6],[6,1,2,3,8,7,4,9,5],[5,4,9,2,1,6,7,3,8],[7,6,3,5,2,4,1,8,9],[9,2,8,6,7,1,3,4,5],[1,5,4,9,3,8,6,0,0]])
-    unsolvable
+    >>> solve([[1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1]])
+    the csp cannot be solved
+    >>> solve([[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]])
+    there may be a solution, but the a-c algorithm was unable to find it (no polymorphism)
     >>> solve([[2,4,8,3,6,5,7,9,1],[9,3,7,8,1,4,6,2,5],[5,1,6,7,2,9,3,8,4],[7,8,1,4,3,2,5,6,9],[4,6,9,5,8,1,2,7,3],[3,5,2,9,7,6,4,1,8],[8,9,5,2,4,7,1,3,6],[6,0,4,1,9,3,8,5,0],[1,0,3,6,5,8,9,4,0]])
     [[2, 4, 8, 3, 6, 5, 7, 9, 1], [9, 3, 7, 8, 1, 4, 6, 2, 5], [5, 1, 6, 7, 2, 9, 3, 8, 4], [7, 8, 1, 4, 3, 2, 5, 6, 9], [4, 6, 9, 5, 8, 1, 2, 7, 3], [3, 5, 2, 9, 7, 6, 4, 1, 8], [8, 9, 5, 2, 4, 7, 1, 3, 6], [6, 2, 4, 1, 9, 3, 8, 5, 7], [1, 7, 3, 6, 5, 8, 9, 4, 2]]
     """
     A = Mto_class(M)
     Lto_class(A)
     R = ACalg(A)
+    if np.any([square.K==[] for square in np.array(R).ravel()]):
+        print('the csp cannot be solved')
+        return None
     R = finish(R)
     M = class_to_M(R)
     if np.all([x!=0 for x in np.array(M).ravel()]):
         return M
     else:
-        print('unsolvable')
-
-
-# ### Sudoku1 solution
-
-# In[18]:
-
-
-sudoku_plot(sudoku1)
-sudoku_plot(solve(sudoku1))
-
-
-# ### Sudoku2 solution
-
-# In[19]:
-
-
-sudoku_plot(sudoku2)
-sudoku_plot(solve(sudoku2))
-
-
-# In[ ]:
-
-
-
+        print('there may be a solution, but the a-c algorithm was unable to find it (no polymorphism)')
+        return None
 
