@@ -15,8 +15,8 @@ import doctest
 # In[4]:
 
 
-file_name1='D:/ASD/rocks/sudoku_01.json'
-file_name2='D:/ASD/rocks/sudoku_02.json'
+file_name1='sudoku_01.json'
+file_name2='sudoku_02.json'
 
 with open(file_name1, 'r') as jsonfile:
     sudoku1 = json.load(jsonfile)
