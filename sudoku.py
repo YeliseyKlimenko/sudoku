@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[6]:
 
 
 import numpy as np
@@ -12,7 +12,7 @@ import doctest
 
 # ### Import initial tables
 
-# In[2]:
+# In[22]:
 
 
 file_name1='sudoku_01.json'
@@ -27,7 +27,7 @@ with open(file_name2, 'r') as jsonfile:
 
 # ### Plot initial tables
 
-# In[3]:
+# In[9]:
 
 
 def sudoku_plot(M):
@@ -42,13 +42,13 @@ def sudoku_plot(M):
                 text = ax.text(i, j, M[i][j], ha="center", va="center", color="red")
 
 
-# In[4]:
+# In[10]:
 
 
 sudoku_plot(sudoku1)
 
 
-# In[5]:
+# In[11]:
 
 
 sudoku_plot(sudoku2)
@@ -56,7 +56,7 @@ sudoku_plot(sudoku2)
 
 # ### Dependencies
 
-# In[1]:
+# In[12]:
 
 
 class Square:  #class that represents each square in a soduku table
@@ -81,7 +81,7 @@ class Link:  #class that represents each link(arc) between neighboring squares a
         self.K = [K1, K2] #label pair
 
 
-# In[2]:
+# In[13]:
 
 
 def Mto_class(M): #function that takes the sudoku table (9x9 list) as an input and converts it into a 9x9 matrix of 'square' type objects
@@ -141,7 +141,7 @@ def Mto_class(M): #function that takes the sudoku table (9x9 list) as an input a
     return A
 
 
-# In[1]:
+# In[14]:
 
 
 def Lto_class(A):  #function that attaches the appropriate links to each 'square' type object in the matrix
@@ -156,7 +156,7 @@ def Lto_class(A):  #function that attaches the appropriate links to each 'square
             square.L.extend(L)
 
 
-# In[2]:
+# In[15]:
 
 
 def ACalg(A):  #arc_consistency enforcement algorithm
@@ -184,7 +184,7 @@ def ACalg(A):  #arc_consistency enforcement algorithm
         return A
 
 
-# In[3]:
+# In[16]:
 
 
 def class_to_M(A):  #function that converts a matrix of 'square' type objects into a 9x9 list
@@ -214,7 +214,7 @@ def finish(A):  #brute force algorithm
 
 # ### Arc-consistency algorithm
 
-# In[4]:
+# In[20]:
 
 
 def solve(M):  #function that takes a sudoku table (9x9 list) as an input and returns a solved table (9x9 list) or reports on the puzzle's insolubility
@@ -234,6 +234,24 @@ def solve(M):  #function that takes a sudoku table (9x9 list) as an input and re
         return M
     else:
         print('unsolvable')
+
+
+# ### Sudoku1 solution
+
+# In[18]:
+
+
+sudoku_plot(sudoku1)
+sudoku_plot(solve(sudoku1))
+
+
+# ### Sudoku2 solution
+
+# In[19]:
+
+
+sudoku_plot(sudoku2)
+sudoku_plot(solve(sudoku2))
 
 
 # In[ ]:
